@@ -69,7 +69,7 @@ if "selected_image_path" in st.session_state:
         box_color="#000000",
         aspect_ratio=None
     )
-
+    #IMAGE SIZE EDIT
     st.image(cropped_image, width=350)
 
 if st.button("Add Item"):
