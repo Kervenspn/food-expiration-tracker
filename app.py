@@ -5,6 +5,7 @@ import streamlit as st
 from datetime import date, datetime
 from PIL import Image
 from streamlit_cropper import st_cropper
+from cloud_storage import upload_image_to_gcs
 
 API_URL = "http://127.0.0.1:8000"
 
@@ -77,7 +78,8 @@ if st.button("Add Item"):
         image_path = None
 
         if cropped_image is not None:
-            image_path = save_cropped_image(cropped_image)
+            local_path = save_cropped_image(cropped_image)
+            image_path = upload_image_to_gcs(local_path)
 
         requests.post(f"{API_URL}/items", json={
             "name": name,
