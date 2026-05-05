@@ -2,6 +2,7 @@ import os
 import uuid
 import requests
 import streamlit as st
+from vision_api import detect_food_name
 from datetime import date, datetime
 from PIL import Image
 from streamlit_cropper import st_cropper
@@ -45,7 +46,7 @@ def save_cropped_image(cropped_image):
 
 st.header("Add Food Item")
 
-name = st.text_input("Food Name")
+name = st.text_input("Food Name", value=st.session_state.get("detected_name", ""))
 exp_date = st.date_input("Expiration Date", value=date.today())
 
 uploaded_image = st.file_uploader("Upload Image", type=["png", "jpg", "jpeg"])
@@ -72,6 +73,12 @@ if "selected_image_path" in st.session_state:
     )
     #IMAGE SIZE EDIT
     st.image(cropped_image, width=350)
+
+    if st.button("Detect Food Name"):
+        temp_path = save_cropped_image(cropped_image)
+        detected_name = detect_food_name(temp_path)
+        st.session_state["detected_name"] = detected_name
+        st.rerun()
 
 if st.button("Add Item"):
     if name:
