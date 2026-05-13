@@ -122,7 +122,12 @@ else:
 
         st.subheader(item_name)
         st.write(f"Expiration: {formatted_date}")
-        st.write(f"Status: {status}")
+        if status == "Expired":
+            st.markdown(f"**Status:** 🔴 {status}")
+        elif status == "Expiring Soon":
+            st.markdown(f"**Status:** 🟡 {status}")
+        else:
+            st.markdown(f"**Status:** 🟢 {status}")
 
         if image_path:
             st.image(image_path, width=350)
