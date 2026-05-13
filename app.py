@@ -83,7 +83,7 @@ if food_type == "Regular Food":
     exp_date = st.date_input("Expiration Date", value=date.today())
     is_frozen = st.checkbox("Is this going to the freezer?")
     quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
-    notes = st.text_area("Notes (optional)", placeholder="e.g. opened Monday, use for pasta")
+    notes = st.text_area("Notes (optional)", placeholder=" opened Monday, use for pasta, put in freezer soon, etc")
 
     input_method = st.selectbox("How do you want to add an image?", ["Upload Image", "Take a Picture"])
 
@@ -159,7 +159,7 @@ else:  # Fresh Produce
 
     storage = st.selectbox("Storage Location", ["Fridge", "Counter"])
     prod_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
-    prod_notes = st.text_area("Notes (optional)", placeholder="e.g. spotted, soft spots")
+    prod_notes = st.text_area("Notes (optional)", placeholder=" spotted, soft spots, etc")
 
     # Image upload for produce
     prod_input_method = st.selectbox("How do you want to add an image?", ["Upload Image", "Take a Picture"])
