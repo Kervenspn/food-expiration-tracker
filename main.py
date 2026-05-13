@@ -27,6 +27,7 @@ class ProduceCreate(BaseModel):
     storage_location: str = "Fridge"
     notes: str = ""
     quantity: int = 1
+    image_path: str | None = None
 
 class ProduceUpdate(BaseModel):
     name: str
@@ -64,7 +65,7 @@ def read_produce():
 
 @app.post("/produce")
 def create_produce(produce: ProduceCreate):
-    add_produce(produce.name, produce.ripeness, produce.storage_location, produce.notes, produce.quantity)
+    add_produce(produce.name, produce.ripeness, produce.storage_location, produce.notes, produce.quantity, produce.image_path)
     return {"message": "Produce added"}
 
 @app.delete("/produce/{produce_id}")

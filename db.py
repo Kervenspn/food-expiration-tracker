@@ -29,12 +29,18 @@ def init_db():
         storage_location TEXT DEFAULT 'Fridge',
         notes TEXT DEFAULT '',
         quantity INTEGER DEFAULT 1,
+        image_path TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
 
     try:
         cursor.execute("ALTER TABLE items ADD COLUMN quantity INTEGER DEFAULT 1")
+    except:
+        pass
+
+    try:
+        cursor.execute("ALTER TABLE produce ADD COLUMN image_path TEXT")
     except:
         pass
 
@@ -88,13 +94,13 @@ def update_item(item_id, name, expiration_date, is_frozen, notes, quantity):
     conn.commit()
     conn.close()
 
-def add_produce(name, ripeness, storage_location="Fridge", notes="", quantity=1):
+def add_produce(name, ripeness, storage_location="Fridge", notes="", quantity=1, image_path=None):
     conn = connect()
     cursor = conn.cursor()
 
     cursor.execute(
-        "INSERT INTO produce (name, ripeness, storage_location, notes, quantity) VALUES (?, ?, ?, ?, ?)",
-        (name, ripeness, storage_location, notes, int(quantity))
+        "INSERT INTO produce (name, ripeness, storage_location, notes, quantity, image_path) VALUES (?, ?, ?, ?, ?, ?)",
+        (name, ripeness, storage_location, notes, int(quantity), image_path)
     )
 
     conn.commit()
@@ -105,7 +111,7 @@ def get_produce():
     cursor = conn.cursor()
 
     cursor.execute("""
-    SELECT id, name, ripeness, storage_location, notes, quantity, created_at
+    SELECT id, name, ripeness, storage_location, notes, quantity, image_path, created_at
     FROM produce
     ORDER BY created_at DESC
     """)

@@ -200,13 +200,8 @@ else:  # Fresh Produce
         if prod_name:
             image_path = None
             if prod_cropped_image is not None:
-                st.write(f"DEBUG: Cropped image exists")  # Debug
                 local_path = save_cropped_image(prod_cropped_image)
-                st.write(f"DEBUG: Local path = {local_path}")  # Debug
                 image_path = upload_image_to_gcs(local_path)
-                st.write(f"DEBUG: GCS path = {image_path}")  # Debug
-            else:
-                st.write(f"DEBUG: Cropped image is None")  # Debug
 
             requests.post(f"{API_URL}/produce", json={
                 "name": prod_name,
@@ -457,12 +452,16 @@ else:
                 prod_storage = produce[3]
                 prod_notes = produce[4]
                 prod_qty = produce[5]
+                prod_image_path = produce[6] if len(produce) > 6 else None
 
                 st.write(f"**{prod_name}** ({prod_qty}) — {prod_storage}")
                 st.write(f"Ripeness: {prod_ripeness}")
 
                 if prod_notes:
                     st.markdown(f"**Notes:** {prod_notes}")
+
+                if prod_image_path:
+                    st.image(prod_image_path, width=350)
 
                 col_delete, col_edit = st.columns(2)
 
