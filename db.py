@@ -9,34 +9,45 @@ def init_db():
     conn = connect()
     cursor = conn.cursor()
 
-    #Create the items table if it doesn't exist yet
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         expiration_date TEXT NOT NULL,
         image_path TEXT,
-        category TEXT DEFAULT 'Fridge'
+        is_frozen INTEGER DEFAULT 0,
+        notes TEXT DEFAULT '',
+        quantity INTEGER DEFAULT 1
     )
     """)
 
-    # If the table already exists, try adding the category column
-    # This won't crash if it already exists. I hope
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS produce (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        ripeness TEXT NOT NULL,
+        storage_location TEXT DEFAULT 'Fridge',
+        notes TEXT DEFAULT '',
+        quantity INTEGER DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
     try:
-        cursor.execute("ALTER TABLE items ADD COLUMN category TEXT DEFAULT 'Fridge'")
+        cursor.execute("ALTER TABLE items ADD COLUMN quantity INTEGER DEFAULT 1")
     except:
         pass
 
     conn.commit()
     conn.close()
 
-def add_item(name, expiration_date, image_path=None, category="Fridge"):
+def add_item(name, expiration_date, image_path=None, is_frozen=False, notes="", quantity=1):
     conn = connect()
     cursor = conn.cursor()
 
     cursor.execute(
-        "INSERT INTO items (name, expiration_date, image_path, category) VALUES (?, ?, ?, ?)",
-        (name, str(expiration_date), image_path, category)
+        "INSERT INTO items (name, expiration_date, image_path, is_frozen, notes, quantity) VALUES (?, ?, ?, ?, ?, ?)",
+        (name, str(expiration_date), image_path, int(is_frozen), notes, int(quantity))
     )
 
     conn.commit()
@@ -47,7 +58,7 @@ def get_items():
     cursor = conn.cursor()
 
     cursor.execute("""
-    SELECT id, name, expiration_date, image_path, category
+    SELECT id, name, expiration_date, image_path, is_frozen, notes, quantity
     FROM items
     ORDER BY expiration_date
     """)
@@ -65,13 +76,60 @@ def delete_item(item_id):
     conn.commit()
     conn.close()
 
-def update_item(item_id, name, expiration_date, category):
+def update_item(item_id, name, expiration_date, is_frozen, notes, quantity):
     conn = connect()
     cursor = conn.cursor()
 
     cursor.execute(
-        "UPDATE items SET name = ?, expiration_date = ?, category = ? WHERE id = ?",
-        (name, str(expiration_date), category, item_id)
+        "UPDATE items SET name = ?, expiration_date = ?, is_frozen = ?, notes = ?, quantity = ? WHERE id = ?",
+        (name, str(expiration_date), int(is_frozen), notes, int(quantity), item_id)
+    )
+
+    conn.commit()
+    conn.close()
+
+def add_produce(name, ripeness, storage_location="Fridge", notes="", quantity=1):
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO produce (name, ripeness, storage_location, notes, quantity) VALUES (?, ?, ?, ?, ?)",
+        (name, ripeness, storage_location, notes, int(quantity))
+    )
+
+    conn.commit()
+    conn.close()
+
+def get_produce():
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT id, name, ripeness, storage_location, notes, quantity, created_at
+    FROM produce
+    ORDER BY created_at DESC
+    """)
+
+    produce = cursor.fetchall()
+    conn.close()
+    return produce
+
+def delete_produce(produce_id):
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM produce WHERE id = ?", (produce_id,))
+
+    conn.commit()
+    conn.close()
+
+def update_produce(produce_id, name, ripeness, storage_location, notes, quantity):
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "UPDATE produce SET name = ?, ripeness = ?, storage_location = ?, notes = ?, quantity = ? WHERE id = ?",
+        (name, ripeness, storage_location, notes, int(quantity), produce_id)
     )
 
     conn.commit()
