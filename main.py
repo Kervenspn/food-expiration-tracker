@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from db import init_db, get_items, add_item, delete_item
 from camera import capture_image
+from db import init_db, get_items, add_item, delete_item, update_item
 
 app = FastAPI()
 init_db()
@@ -37,3 +38,12 @@ def capture_item():
 def remove_item(item_id: int):
     delete_item(item_id)
     return {"message": "Item deleted"}
+
+class ItemUpdate(BaseModel):
+    name: str
+    expiration_date: str
+
+@app.put("/items/{item_id}")
+def edit_item(item_id: int, item: ItemUpdate):
+    update_item(item_id, item.name, item.expiration_date)
+    return {"message": "Item updated"}

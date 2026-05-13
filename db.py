@@ -55,3 +55,12 @@ def delete_item(item_id):
 
     conn.commit()
     conn.close()
+def update_item(item_id, name, expiration_date):
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE items SET name = ?, expiration_date = ? WHERE id = ?",
+        (name, str(expiration_date), item_id)
+    )
+    conn.commit()
+    conn.close()

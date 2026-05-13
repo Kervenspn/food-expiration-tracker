@@ -127,8 +127,26 @@ else:
         if image_path:
             st.image(image_path, width=350)
 
-        if st.button(f"Delete {item_name}", key=f"delete_{item_id}"):
-            requests.delete(f"{API_URL}/items/{item_id}")
-            st.rerun()
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button(f"Delete {item_name}", key=f"delete_{item_id}"):
+                requests.delete(f"{API_URL}/items/{item_id}")
+                st.rerun()
+
+        with col2:
+            if st.button(f"Edit {item_name}", key=f"edit_btn_{item_id}"):
+                st.session_state[f"editing_{item_id}"] = True
+
+        if st.session_state.get(f"editing_{item_id}"):
+            new_name = st.text_input("New Name", value=item_name, key=f"name_{item_id}")
+            new_date = st.date_input("New Expiration Date", value=exp_date_obj, key=f"date_{item_id}")
+            if st.button("Save", key=f"save_{item_id}"):
+                requests.put(f"{API_URL}/items/{item_id}", json={
+                    "name": new_name,
+                    "expiration_date": str(new_date)
+                })
+                st.session_state[f"editing_{item_id}"] = False
+                st.rerun()
 
         st.divider()
