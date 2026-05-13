@@ -54,8 +54,14 @@ name = st.text_input("Food Name", value=st.session_state.get("detected_name", ""
 exp_date = st.date_input("Expiration Date", value=date.today())
 category = st.selectbox("Storage Location", ["Fridge", "Freezer", "Dry Pantry"])
 
-uploaded_image = st.file_uploader("Upload Image", type=["png", "jpg", "jpeg"])
-camera_photo = st.camera_input("Take a picture")
+input_method = st.selectbox("How do you want to add an image?", ["Upload Image", "Take a Picture"])
+
+if input_method == "Upload Image":
+    uploaded_image = st.file_uploader("Upload Image", type=["png", "jpg", "jpeg"])
+    camera_photo = None
+else:
+    camera_photo = st.camera_input("Take a picture")
+    uploaded_image = None
 
 if uploaded_image:
     st.session_state["selected_image_path"] = save_uploaded_image(uploaded_image)
